@@ -1,0 +1,353 @@
+@import 'tailwindcss';
+
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, system-ui, 'Segoe UI', Roboto, 'Inter', Helvetica,
+    Arial, sans-serif;
+
+  /* Ink (text) */
+  --color-ink: #13211b;
+
+  /* Brand — fairway green */
+  --color-brand-50: #eff7f2;
+  --color-brand-100: #d7ebe0;
+  --color-brand-200: #b0d7c2;
+  --color-brand-300: #82bd9e;
+  --color-brand-400: #529d78;
+  --color-brand-500: #308058;
+  --color-brand-600: #1f6743;
+  --color-brand-700: #1a5438;
+  --color-brand-800: #16442e;
+  --color-brand-900: #123726;
+  --color-brand-950: #0a2015;
+
+  /* Accent — trophy gold */
+  --color-gold-300: #e6cd8f;
+  --color-gold-400: #d8b869;
+  --color-gold-500: #c69a3c;
+  --color-gold-600: #a87e2b;
+
+  /* Warm neutrals — sand */
+  --color-sand-50: #faf8f2;
+  --color-sand-100: #f2ede1;
+  --color-sand-200: #e6dcc6;
+
+  --radius-xl: 0.9rem;
+  --radius-2xl: 1.15rem;
+
+  --shadow-card: 0 1px 2px rgba(16, 24, 20, 0.04), 0 10px 30px -14px rgba(16, 24, 20, 0.18);
+  --shadow-raise: 0 2px 6px rgba(16, 24, 20, 0.06), 0 18px 40px -18px rgba(16, 24, 20, 0.28);
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    color: var(--color-ink);
+    background-color: #f3f5f2;
+    background-image:
+      radial-gradient(1100px 560px at 100% -8%, #e6f1ea 0%, rgba(230, 241, 234, 0) 60%),
+      radial-gradient(900px 500px at -10% 0%, #f6f2e7 0%, rgba(246, 242, 231, 0) 55%),
+      linear-gradient(180deg, #f6f7f3 0%, #eef2ee 100%);
+    background-attachment: fixed;
+    min-height: 100dvh;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--color-brand-500) 26%, transparent);
+  }
+
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .animate-in {
+      animation: fadeInUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+  }
+
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Outdoor mode — high-contrast overrides for bright sunlight on the course.
+   IMPORTANT: no filter/backdrop-filter here — that would trap position:fixed
+   overlays (portals). We only strengthen colors, weights, and borders.
+--------------------------------------------------------------------------- */
+html.outdoor {
+  font-size: 16.5px;
+}
+
+/* Muted ink text -> full strength */
+html.outdoor .text-ink\/40,
+html.outdoor .text-ink\/45,
+html.outdoor .text-ink\/50,
+html.outdoor .text-ink\/55,
+html.outdoor .text-ink\/60,
+html.outdoor .text-ink\/70,
+html.outdoor .text-ink\/80 {
+  color: var(--color-ink) !important;
+}
+
+/* Muted white text (on dark chips / board) -> full white */
+html.outdoor .text-white\/40,
+html.outdoor .text-white\/45,
+html.outdoor .text-white\/50,
+html.outdoor .text-white\/55,
+html.outdoor .text-white\/60,
+html.outdoor .text-white\/70,
+html.outdoor .text-white\/80 {
+  color: rgb(255 255 255) !important;
+}
+
+/* Faint dividers/borders -> visible */
+html.outdoor .border-black\/5,
+html.outdoor .border-black\/10 {
+  border-color: rgb(0 0 0 / 0.28) !important;
+}
+
+/* Nudge secondary text a touch heavier for legibility */
+html.outdoor .font-medium {
+  font-weight: 600;
+}
+html.outdoor .font-semibold {
+  font-weight: 700;
+}
+
+/* ---------------------------------------------------------------------------
+   Native-app feel — snappy taps, hidden scrollbars, spring motion.
+--------------------------------------------------------------------------- */
+html {
+  -webkit-tap-highlight-color: transparent;
+}
+html,
+body {
+  overscroll-behavior: none; /* no rubber-band / accidental pull-to-refresh */
+}
+* {
+  scrollbar-width: none;
+}
+*::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
+}
+button,
+a,
+[role='button'],
+input,
+select,
+textarea {
+  touch-action: manipulation; /* kills the 300ms tap delay + double-tap zoom */
+}
+.no-scrollbar {
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+@keyframes scorePop {
+  0% {
+    transform: scale(0.62);
+    opacity: 0.35;
+  }
+  55% {
+    transform: scale(1.16);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes holeInRight {
+  from {
+    opacity: 0;
+    transform: translateX(22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes holeInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-22px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes toastIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes loadingBar {
+  0% {
+    transform: translateX(-120%);
+  }
+  100% {
+    transform: translateX(320%);
+  }
+}
+@keyframes sheetUp {
+  from {
+    opacity: 0;
+    transform: translateY(26px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes tabPop {
+  0% {
+    transform: scale(0.82);
+  }
+  55% {
+    transform: scale(1.14);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .animate-score-pop {
+    animation: scorePop 0.34s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+  .hole-in-right {
+    animation: holeInRight 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .hole-in-left {
+    animation: holeInLeft 0.26s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .toast-item {
+    animation: toastIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+  .confirm-sheet {
+    animation: sheetUp 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+  .tab-pop {
+    animation: tabPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Dark mode — additive overrides under html.dark only (light theme untouched).
+   Remaps the app's hardcoded light surfaces; brand accents stay as pops of color.
+--------------------------------------------------------------------------- */
+html.dark {
+  --color-ink: #e7edea;
+  --color-sand-50: #17221c;
+  --color-sand-100: #1c2922;
+  --color-sand-200: #26342c;
+  color-scheme: dark;
+}
+html.dark body {
+  background-color: #0a1410;
+  background-image:
+    radial-gradient(1100px 560px at 100% -8%, #0f241b 0%, rgba(15, 36, 27, 0) 60%),
+    radial-gradient(900px 500px at -10% 0%, #142019 0%, rgba(20, 32, 25, 0) 55%),
+    linear-gradient(180deg, #0b1712 0%, #0a1410 100%);
+}
+/* Solid & translucent white surfaces -> dark cards */
+html.dark .bg-white {
+  background-color: #141e19 !important;
+}
+html.dark .bg-white\/95 {
+  background-color: rgba(20, 30, 25, 0.95) !important;
+}
+html.dark .bg-white\/90 {
+  background-color: rgba(20, 30, 25, 0.9) !important;
+}
+html.dark .bg-white\/80 {
+  background-color: rgba(13, 21, 17, 0.8) !important;
+}
+html.dark .bg-white\/70 {
+  background-color: rgba(13, 21, 17, 0.72) !important;
+}
+html.dark .bg-white\/50 {
+  background-color: rgba(20, 30, 25, 0.5) !important;
+}
+/* Faint hairlines -> light */
+html.dark .border-black\/5,
+html.dark .border-black\/10,
+html.dark .border-black\/\[0\.05\],
+html.dark .border-black\/\[0\.06\] {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+/* Faint black fills (steppers, segmented tracks, neutral chips) -> light */
+html.dark .bg-black\/5 {
+  background-color: rgba(255, 255, 255, 0.08) !important;
+}
+/* Dark-green primary text -> near-white */
+html.dark .text-green-950,
+html.dark .text-green-900 {
+  color: #e7edea !important;
+}
+/* Dark-green secondary/muted text -> readable light */
+html.dark .text-green-800 {
+  color: #ccd8d1 !important;
+}
+html.dark .text-green-700 {
+  color: #aec4b9 !important;
+}
+html.dark .text-green-600 {
+  color: #93a99e !important;
+}
+html.dark .text-green-500 {
+  color: #85a094 !important;
+}
+/* Brand text (links, labels, chips) -> readable light green */
+html.dark .text-brand-600,
+html.dark .text-brand-700,
+html.dark .text-brand-800 {
+  color: #7fd1a4 !important;
+}
+/* Brand + green chip backgrounds -> dark tints (so their text reads) */
+html.dark .bg-brand-50 {
+  background-color: #12271d !important;
+}
+html.dark .bg-brand-100 {
+  background-color: #17391f !important;
+}
+html.dark .bg-brand-200 {
+  background-color: #1d4a2c !important;
+}
+html.dark .bg-green-100 {
+  background-color: #17391f !important;
+}
+html.dark .bg-green-200 {
+  background-color: #1d4a2c !important;
+}
+/* Selected segmented-control pill -> elevated surface that pops on dark */
+html.dark .seg-pill {
+  background-color: #2b3a32 !important;
+}
+/* Brighten birdie score on dark */
+html.dark .text-emerald-600 {
+  color: #34d399 !important;
+}
+
