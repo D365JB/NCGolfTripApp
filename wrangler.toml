@@ -1,0 +1,10 @@
+name = "cherokee-cup"
+pages_build_output_dir = "dist"
+compatibility_date = "2024-11-01"
+
+# Cloudflare D1 database binding available to Pages Functions as `env.DB`.
+# database_id is filled in after `wrangler d1 create cherokee-cup-db`.
+[[d1_databases]]
+binding = "DB"
+database_name = "cherokee-cup-db"
+database_id = "f2742301-ea26-4dee-85b3-9df20729fe99"

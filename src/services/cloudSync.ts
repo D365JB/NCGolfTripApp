@@ -1,11 +1,11 @@
 import { db } from '../db/dexie';
 
 /**
- * Cloud sync: keeps the local Dexie DB mirrored with a shared Azure Cosmos DB
- * (via the SWA-managed Functions API at /api). Design goals:
+ * Cloud sync: keeps the local Dexie DB mirrored with a shared Cloudflare D1
+ * database (via Pages Functions at /api). Design goals:
  *  - Local-first: the UI always reads/writes Dexie; sync happens in the background.
- *  - Per-record: every store row is an individual Cosmos document so concurrent
- *    scorers on different phones don't clobber each other (no whole-blob writes).
+ *  - Per-record: every store row is an individual D1 row so concurrent scorers on
+ *    different phones don't clobber each other (no whole-blob writes).
  *  - Delete-safe: deletes are tombstoned server-side so they propagate to peers.
  *  - Offline-tolerant: outgoing writes queue in an outbox and retry on each tick.
  */
@@ -186,7 +186,8 @@ async function tick(): Promise<void> {
 
 /**
  * One-time helper to push the entire local DB up to the cloud (used to seed a
- * fresh Cosmos container from an existing device). Safe to call repeatedly.
+ * fresh D1 database from an existing device). Safe to call repeatedly.
+ * Run from the console: `await window.__seedCloud()`.
  */
 export async function seedCloudFromLocal(): Promise<number> {
   let count = 0;
