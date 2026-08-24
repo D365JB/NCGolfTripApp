@@ -1,14 +1,9 @@
 name = "cherokee-cup"
-main = "worker/index.js"
+pages_build_output_dir = "dist"
 compatibility_date = "2024-11-01"
 
-# Serve the built SPA (Vite output) as static assets; the Worker handles /api/*.
-[assets]
-directory = "./dist"
-binding = "ASSETS"
-not_found_handling = "single-page-application"
-
-# Cloudflare D1 database, available to the Worker as `env.DB`.
+# Cloudflare D1 database binding available to Pages Functions as `env.DB`.
+# database_id is filled in after `wrangler d1 create cherokee-cup-db`.
 [[d1_databases]]
 binding = "DB"
 database_name = "cherokee-cup-db"
