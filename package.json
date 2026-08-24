@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "deploy": "npm run build && wrangler pages deploy dist --project-name cherokee-cup --branch main --commit-dirty=true",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
