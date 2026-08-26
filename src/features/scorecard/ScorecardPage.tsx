@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { useLiveQuery } from 'dexie-react-hooks';
 import { db, newId } from '../../db/dexie';
 import { Button, Skeleton, cx } from '../../components/ui';
-import { ChevronLeft, ChevronRight, Lock, Minus, Plus, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus, Plus } from 'lucide-react';
 import { isTeamBallFormat, FORMAT_LABELS, type EventTeam, type Side, type Course } from '../../domain/model';
 import { computeMatch } from '../../services/scoring';
 import { strokesReceivedOnHole } from '../../domain/scoring';
@@ -137,18 +137,7 @@ export default function ScorecardPage() {
     scores,
   });
 
-  const scorerId = match.scorerPlayerId;
-  const scorer = scorerId ? playersMap.get(scorerId) : undefined;
-  const scorerName = scorer ? `${scorer.firstName} ${scorer.lastName}` : null;
-  const canEdit = !scorerId || !identity || scorerId === identity;
-  const iAmScorer = !!identity && scorerId === identity;
-
-  async function claimScoring() {
-    if (identity) await db.matches.update(matchId, { scorerPlayerId: identity });
-  }
-  async function releaseScoring() {
-    await db.matches.update(matchId, { scorerPlayerId: undefined });
-  }
+  const canEdit = !!identity && participants.some((p) => p.playerId === identity);
 
   const partsA = participants.filter((p) => p.side === 'a');
   const partsB = participants.filter((p) => p.side === 'b');
@@ -194,9 +183,6 @@ export default function ScorecardPage() {
       return;
     }
     const clamped = Math.max(1, Math.min(20, Math.round(gross)));
-    if (!match!.scorerPlayerId && identity) {
-      await db.matches.update(matchId, { scorerPlayerId: identity });
-    }
     const now = new Date().toISOString();
     if (existing) {
       await db.scores.update(existing.id, { gross: clamped, updatedAt: now });
@@ -376,42 +362,6 @@ export default function ScorecardPage() {
             {result.state.holesPlayed} played · {result.state.holesRemaining} to play
           </p>
         </div>
-      </div>
-
-      <div className="mb-4">
-        {scorerName ? (
-          <div
-            className={cx(
-              'flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-xs',
-              iAmScorer ? 'bg-brand-50 text-brand-800' : 'bg-sand-50 text-ink/70',
-            )}
-          >
-            <span className="inline-flex items-center gap-1.5 font-semibold">
-              {iAmScorer ? <ShieldCheck className="h-4 w-4" /> : <Lock className="h-4 w-4" />}
-              {iAmScorer ? "You're scoring this match" : `Scored by ${scorerName}`}
-            </span>
-            {iAmScorer ? (
-              <button onClick={releaseScoring} className="font-semibold text-ink/50 hover:text-ink">
-                Release
-              </button>
-            ) : identity ? (
-              <button onClick={claimScoring} className="font-semibold text-brand-700 hover:underline">
-                Take over
-              </button>
-            ) : null}
-          </div>
-        ) : (
-          <div className="flex items-center justify-between gap-2 rounded-xl bg-sand-50 px-3 py-2 text-xs text-ink/70">
-            <span className="font-semibold">No scorer yet</span>
-            {identity ? (
-              <button onClick={claimScoring} className="font-semibold text-brand-700 hover:underline">
-                Claim scoring
-              </button>
-            ) : (
-              <span className="text-ink/45">Sign in to claim</span>
-            )}
-          </div>
-        )}
       </div>
 
       {view === 'hole' ? (

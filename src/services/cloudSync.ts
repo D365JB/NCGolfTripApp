@@ -93,9 +93,14 @@ async function applyRemote(records: RemoteRecord[]): Promise<void> {
       if (!STORE_SET.has(r.store)) continue;
       try {
         if (r.deleted) {
-          await table(r.store).delete(r.id);
+          if ((await table(r.store).get(r.id)) !== undefined) {
+            await table(r.store).delete(r.id);
+          }
         } else if (r.record) {
-          await table(r.store).put(r.record as Record<string, unknown>);
+          const existing = await table(r.store).get(r.id);
+          if (JSON.stringify(existing) !== JSON.stringify(r.record)) {
+            await table(r.store).put(r.record as Record<string, unknown>);
+          }
         }
       } catch {
         /* ignore a single bad row */
